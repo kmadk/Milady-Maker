@@ -33,13 +33,13 @@ async function main () {
 
     // Deploy the item collection.
     console.log(` -> Deploying the item collection ...`);
-    let miladyContract = await Milady.connect(deployer.signer).deploy(deployer.address, COLLECTION_NAME, COLLECTION_SYMBOL);
+    let miladyContract = await Milady.connect(deployer.signer).deploy();
     let miladyContractDeploy = await itemCollection.deployed();
     console.log(`* Milady contract deployed to: ${miladyContract.address}`);
     totalGasCost = totalGasCost.add(await logTransactionGas(miladyContractDeploy.deployTransaction));
 
     // Verify the smart contract on Etherscan.
-    console.log(`[$]: npx hardhat verify --network rinkeby ${miladyContract.address} ${deployer.address} ${COLLECTION_NAME} ${COLLECTION_SYMBOL}`);
+    console.log(`[$]: npx hardhat verify --network rinkeby ${miladyContract.address}`);
 
     /* Create the bull item group.
     console.log(` -> Creating the Astro Bull item group ...`);
