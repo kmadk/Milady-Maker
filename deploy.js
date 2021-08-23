@@ -34,7 +34,7 @@ async function main () {
     // Deploy the item collection.
     console.log(` -> Deploying the item collection ...`);
     let miladyContract = await Milady.connect(deployer.signer).deploy();
-    let miladyContractDeploy = await itemCollection.deployed();
+    let miladyContractDeploy = await miladyContract.deployed();
     console.log(`* Milady contract deployed to: ${miladyContract.address}`);
     totalGasCost = totalGasCost.add(await logTransactionGas(miladyContractDeploy.deployTransaction));
 
