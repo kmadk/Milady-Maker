@@ -1891,6 +1891,7 @@ contract Miladys is ERC721, Ownable {
     string public MILADY_PROVENANCE = "";
     uint public constant maxMiladyPurchase = 30;
     uint256 public constant MAX_MILADYS = 10000;
+    uint public reservations = 0;
     bool public saleIsActive = false;
     
     constructor() ERC721("Milady", "MIL") {
@@ -1905,12 +1906,14 @@ contract Miladys is ERC721, Ownable {
         msg.sender.transfer(balance);
     }
 
-    function reserveMiladys() public onlyOwner {        
+    function reserveMiladys() public onlyOwner {
+        require(reservations < 5, "reservation amount exceeded");
         uint supply = totalSupply();
         uint i;
-        for (i = 0; i < 500; i++) {
+        for (i = 0; i < 100; i++) {
             _safeMint(msg.sender, supply + i);
         }
+        reservations++;
     }
     
     function flipSaleState() public onlyOwner {
