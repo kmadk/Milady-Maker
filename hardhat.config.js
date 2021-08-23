@@ -6,6 +6,9 @@ require('dotenv').config();
 // Include Babel so that we may use some newer JavaScript syntax.
 require('@babel/register');
 
+// ABI exporter
+require('hardhat-abi-exporter');
+
 // Include Waffle with Ethers as our preferred engine for testing.
 require('@nomiclabs/hardhat-waffle');
 
@@ -83,5 +86,12 @@ module.exports = {
 	},
 	mocha: {
 		grep: '^(?!.*; using Ganache).*'
-	}
+	},
+	abiExporter: {
+  		path: './data/abi',
+  		clear: true,
+  		flat: false,
+  		only: [':Miladys$'],
+  		spacing: 2
+}
 };
