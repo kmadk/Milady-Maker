@@ -29,7 +29,7 @@ async function main () {
     let totalGasCost = ethers.utils.parseEther('0');
 
     // Retrieve contract artifacts and deploy them.
-    const Milady = await ethers.getContractFactory('../contracts/Milady.sol');
+    const Milady = await ethers.getContractFactory('contracts/Milady.sol');
 
     // Deploy the item collection.
     console.log(` -> Deploying the item collection ...`);
