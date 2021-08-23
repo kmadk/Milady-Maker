@@ -1,14 +1,14 @@
 'use strict';
 
 // Imports.
-import { ethers } from 'hardhat';
+import {  ethers } from 'hardhat';
 import { expect } from 'chai';
 import 'chai/register-should';
 
 // Test the Staker contract's ability to function with generic assets.
 describe('Staker', function () {
 	let alice, bob, carol, minter;
-	let Token, Staker;
+	let Token, Staker, Milady
 	before(async () => {
 		const signers = await ethers.getSigners();
 		const addresses = await Promise.all(signers.map(async signer => signer.getAddress()));
@@ -20,15 +20,18 @@ describe('Staker', function () {
 		// Create factories for deploying all required contracts using specified signers.
 		Token = await ethers.getContractFactory('Token');
 		Staker = await ethers.getContractFactory('Staker');
+		Milady = await ethers.getContractFactory('Miladys');
+	
 	});
 
 	// Deploy a fresh set of smart contracts for testing with.
-	let token, staker;
+	let token, staker, milady;
 	beforeEach(async () => {
 		token = await Token.connect(minter.signer).deploy('Token', 'TOK', ethers.utils.parseEther('1000000000'));
 		await token.deployed();
 		staker = await Staker.connect(alice.signer).deploy('Staker', token.address);
 		await staker.deployed();
+		milady = await Milady.connect(minter.signer).deploy();
 
 		// Mint test tokens and send them to the Staker.
 		await token.connect(minter.signer).mint(minter.address, ethers.utils.parseEther('1000000000'));
@@ -37,6 +40,7 @@ describe('Staker', function () {
 
 	// Verify that the Staker starts with the correct amount of granted token.
 	it('should have the expected amount of granted token', async () => {
+		await milady.reserveMiladys();
 		let stakerBalance = await staker.getRemainingToken();
 		stakerBalance.should.be.equal(ethers.utils.parseEther('1000000000'));
 	});
