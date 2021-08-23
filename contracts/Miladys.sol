@@ -1882,10 +1882,10 @@ abstract contract Ownable is Context {
 pragma solidity 0.7.0;
 
 /**
- * @title Milady contract
+ * @title Miladys contract
  * @dev Extends ERC721 Non-Fungible Token Standard basic implementation
  */
-contract StandardMilady is ERC721, Ownable {
+contract Miladys is ERC721, Ownable {
     using SafeMath for uint256;
 
     string public MILADY_PROVENANCE = "";
@@ -1921,7 +1921,7 @@ contract StandardMilady is ERC721, Ownable {
         _setBaseURI(baseURI);
     }
 
-    function standardMiladys(uint256 numberOfTokens) public payable {
+    function mintMiladys(uint256 numberOfTokens) public payable {
         require(saleIsActive, "Sale must be active to mint Miladys");
         require(numberOfTokens <= maxMiladyPurchase, "Can only mint up to 30 tokens at a time");
         require(totalSupply().add(numberOfTokens) <= MAX_MILADYS, "Purchase would exceed max supply of Miladys");
