@@ -1933,7 +1933,7 @@ contract Miladys is ERC721, Ownable {
             mintAmount = 1;
         }
         uint i;
-        for (i = 0; i < mintAmount; i++) {
+        for (i = 0; i < mintAmount && totalSupply() < 10000; i++) {
             uint supply = totalSupply();
             _safeMint(msg.sender, supply);
         }
