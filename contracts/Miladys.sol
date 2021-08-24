@@ -1890,10 +1890,13 @@ contract Miladys is ERC721, Ownable {
 
     string public MILADY_PROVENANCE = "";
     uint public constant maxMiladyPurchase = 30;
-    uint256 public constant MAX_MILADYS = 10000;
-    uint public reservations = 0;
+    uint256 public constant MAX_MILADYS = 9500;
     bool public saleIsActive = false;
+    uint256 public standardMiladyCount = 0;
     
+    mapping(address => bool) public whitelistOneMint;
+    mapping(address => bool) public whitelistTwoMint;
+
     constructor() ERC721("Milady", "MIL") {
     }
     
@@ -1905,15 +1908,35 @@ contract Miladys is ERC721, Ownable {
         uint balance = address(this).balance;
         msg.sender.transfer(balance);
     }
+    function editWhitelistOne(address[] memory array) public onlyOwner {
+        for(uint256 i = 0; i < array.length; i++) {
+            address addressElement = array[i];
+            whitelistOneMint[addressElement] = true;
+        } 
+    }
 
-    function reserveMiladys() public onlyOwner {
-        require(reservations < 5, "reservation amount exceeded");
-        uint supply = totalSupply();
-        uint i;
-        for (i = 0; i < 100; i++) {
-            _safeMint(msg.sender, supply + i);
+    function editWhitelistTwo(address[] memory array) public onlyOwner {
+        for(uint256 i = 0; i < array.length; i++) {
+            address addressElement = array[i];
+            whitelistTwoMint[addressElement] = true;
+        } 
+    }
+
+    function reserveMintMiladys() public {
+        require(whitelistTwoMint[msg.sender] || whitelistOneMint[msg.sender], "sender not whitelisted");
+        uint mintAmount;
+        if (whitelistTwoMint[msg.sender]) {
+            whitelistTwoMint[msg.sender] = false;
+            mintAmount = 2;
+        } else {
+            whitelistOneMint[msg.sender] = false;
+            mintAmount = 1;
         }
-        reservations++;
+        uint i;
+        for (i = 0; i < mintAmount; i++) {
+            uint supply = totalSupply();
+            _safeMint(msg.sender, supply);
+        }
     }
     
     function flipSaleState() public onlyOwner {
@@ -1927,7 +1950,7 @@ contract Miladys is ERC721, Ownable {
     function mintMiladys(uint256 numberOfTokens) public payable {
         require(saleIsActive, "Sale must be active to mint Miladys");
         require(numberOfTokens <= maxMiladyPurchase, "Can only mint up to 30 tokens at a time");
-        require(totalSupply().add(numberOfTokens) <= MAX_MILADYS, "Purchase would exceed max supply of Miladys");
+        require(standardMiladyCount.add(numberOfTokens) <= MAX_MILADYS, "Purchase would exceed max supply of Miladys");
         uint256 miladyPrice;
         if (numberOfTokens == 30) {
             miladyPrice = 60000000000000000; // 0.06 ETH
@@ -1944,9 +1967,9 @@ contract Miladys is ERC721, Ownable {
         }
 
         for(uint i = 0; i < numberOfTokens; i++) {
-            uint mintIndex = totalSupply();
-            if (totalSupply() < MAX_MILADYS) {
-                _safeMint(msg.sender, mintIndex);
+            if (standardMiladyCount < MAX_MILADYS) {
+                _safeMint(msg.sender, totalSupply());
+                standardMiladyCount++;
             }
         }
     }
